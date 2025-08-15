@@ -1,81 +1,84 @@
+/* style.css */
+
+/* Image de fond pleine page */
 body {
-    margin: 0;
-    height: 100vh;
-    font-family: Arial, sans-serif;
-    background-image: url('monlogo.png');
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    color: white;
-    position: relative;
+  margin: 0;
+  padding: 0;
+  background-image: url('background.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  height: 100vh;
+  font-family: Arial, sans-serif;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
 }
 
-/* Logo en haut */
-.logo-top {
-    position: fixed;
-    top: 10px;
-    left: 50%;
-    transform: translateX(-50%);
-    max-width: 440px;   /* 2x plus grand */
-    z-index: 10;
-}
-
-/* Logo en bas */
+/* Logos en haut et en bas */
+.logo-top,
 .logo-bottom {
-    position: fixed;
-    bottom: 10px;
-    left: 50%;
-    transform: translateX(-50%);
-    max-width: 440px;   /* 2x plus grand */
-    z-index: 10;
+  width: 400px; /* 2x plus grand que 200px */
+  height: auto;
+  margin: 20px 0;
 }
 
-/* Contenu au centre */
+/* Contenu central */
 .content {
-    background-color: rgba(0, 0, 0, 0.5);
-    padding: 40px;
-    border-radius: 12px;
-    text-align: center;
-    max-width: 400px;
-    width: 90%;
-    z-index: 5;
+  background: rgba(0, 0, 0, 0.5); /* fond semi-transparent pour lisibilité */
+  padding: 20px 40px;
+  border-radius: 10px;
+  text-align: center;
+  max-width: 320px;
 }
 
-h1 {
-    font-size: 2.5em;
-    margin-bottom: 20px;
-}
-
+/* Select déroulant */
 select {
-    font-size: 1.2em;
-    padding: 10px;
-    margin-bottom: 20px;
-    width: 100%;
-    border-radius: 5px;
-    border: none;
+  padding: 8px;
+  font-size: 16px;
+  border-radius: 5px;
+  border: none;
+  margin-top: 10px;
 }
 
+/* Bouton Twint */
 button {
-    font-size: 1.2em;
-    padding: 10px 20px;
-    background-color: #0074d9;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    width: 100%;
+  margin-top: 15px;
+  padding: 10px 20px;
+  font-size: 16px;
+  background-color: #00b24c;
+  border: none;
+  border-radius: 5px;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
 button:hover {
-    background-color: #005fa3;
+  background-color: #008933;
 }
 
+/* QR Code */
 #qrCodeContainer img {
-    margin-top: 30px;
-    width: 200px;
-    height: 200px;
+  margin-top: 15px;
+  width: 200px;
+  height: 200px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px #00b24c;
 }
+
+/* Responsive : réduit un peu la taille des logos et contenu sur petits écrans */
+@media (max-width: 400px) {
+  .logo-top,
+  .logo-bottom {
+    width: 200px; /* réduit la taille à 200px sur petits écrans */
+  }
+
+  .content {
+    max-width: 90%;
+    padding: 15px 20px;
+  }
+
+  #qrCodeContai
