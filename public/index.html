@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8" />
+    <title>Recharge Vélo Électrique</title>
+    <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+    <!-- Image en haut -->
+    <img src="logo-haut.png" alt="Logo haut" class="logo-top" />
+
+    <!-- Contenu principal -->
+    <div class="content">
+        <h1>Recharge ton vélo électrique</h1>
+
+        <p>Choisis une durée de recharge :</p>
+        <select id="duration">
+            <option value="30">30 minutes - CHF 1.50</option>
+            <option value="60">1 heure - CHF 2.00</option>
+            <option value="120">2 heures - CHF 2.50</option>
+            <option value="180">3 heures - CHF 3.00</option>
+        </select>
+
+        <button onclick="startPayment()">Payer avec Twint</button>
+
+        <div id="qrCodeContainer"></div>
+    </div>
+
+    <!-- Image en bas -->
+    <img src="logo-bas.png" alt="Logo bas" class="logo-bottom" />
+
+    <script>
+        function startPayment() {
+            const duration = document.getElementById("duration").value;
+            fetch("/pay", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ duration }),
+            })
+                .then((res) => res.json())
+                .then((data) => {
+                    document.getElementById("qrCodeContainer").innerHTML =
+                        `<img src="${data.qrCodeUrl}" alt="QR TWINT" />`;
+                });
+        }
+    </script>
+</body>
+</html>

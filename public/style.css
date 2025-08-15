@@ -1,0 +1,81 @@
+body {
+    margin: 0;
+    height: 100vh;
+    font-family: Arial, sans-serif;
+    background-image: url('monlogo.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    position: relative;
+}
+
+/* Logo en haut */
+.logo-top {
+    position: fixed;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    max-width: 440px;   /* 2x plus grand */
+    z-index: 10;
+}
+
+/* Logo en bas */
+.logo-bottom {
+    position: fixed;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    max-width: 440px;   /* 2x plus grand */
+    z-index: 10;
+}
+
+/* Contenu au centre */
+.content {
+    background-color: rgba(0, 0, 0, 0.5);
+    padding: 40px;
+    border-radius: 12px;
+    text-align: center;
+    max-width: 400px;
+    width: 90%;
+    z-index: 5;
+}
+
+h1 {
+    font-size: 2.5em;
+    margin-bottom: 20px;
+}
+
+select {
+    font-size: 1.2em;
+    padding: 10px;
+    margin-bottom: 20px;
+    width: 100%;
+    border-radius: 5px;
+    border: none;
+}
+
+button {
+    font-size: 1.2em;
+    padding: 10px 20px;
+    background-color: #0074d9;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 100%;
+}
+
+button:hover {
+    background-color: #005fa3;
+}
+
+#qrCodeContainer img {
+    margin-top: 30px;
+    width: 200px;
+    height: 200px;
+}
