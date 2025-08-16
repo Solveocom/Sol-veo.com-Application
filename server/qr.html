@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8" />
+    <title>QR Code de paiement</title>
+</head>
+<body>
+    <h1>Voici ton QR code de paiement</h1>
+    <!-- Image QR code générée dynamiquement -->
+    <img id="qr-code" alt="QR Code de paiement" />
+
+    <script>
+        // Simule la récupération de la chaîne base64 (ici tu devras mettre ta vraie donnée)
+        const qrCodeBase64 = "iVBORw0KGgoAAAANSUhEUgAAAcIAAAHCAQA..."; // copie ta vraie chaîne ici
+
+        // Récupère l'élément <img>
+        const img = document.getElementById('qr-code');
+
+        // Assigne la source de l'image en base64
+        img.src = "data:image/png;base64," + qrCodeBase64;
+    </script>
+</body>
+</html>

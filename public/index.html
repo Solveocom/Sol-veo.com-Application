@@ -1,48 +1,140 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8" />
-    <title>Recharge Vélo Électrique</title>
-    <link rel="stylesheet" href="style.css" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Recharge Vélo Électrique</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    /* Conteneur QR (affiché après création du paiement) */
+    #qrCodeContainer {
+      margin-top: 30px;
+      display: none;
+      text-align: center;
+    }
+
+    /* QR code */
+    #qrImage {
+      width: 600px;   /* 3x plus grand */
+      height: 600px;
+      border-radius: 10px;
+      box-shadow: 0 0 20px #00b24c;
+    }
+
+    /* Lien direct de paiement (gros texte) */
+    #paymentLink {
+      margin-top: 16px;
+      display: block;
+      color: #aaf;
+      text-decoration: underline;
+      font-size: 32px; /* plus grand */
+    }
+
+    /* Bouton Twint */
+    button {
+      margin-top: 20px;
+      padding: 20px 40px;
+      font-size: 32px;
+      background-color: #00b24c;
+      border: none;
+      border-radius: 10px;
+      color: white;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #008933;
+    }
+
+    /* Select déroulant */
+    select {
+      padding: 12px;
+      font-size: 28px;
+      border-radius: 10px;
+      border: none;
+      margin-top: 10px;
+    }
+
+    /* Contenu central */
+    .content {
+      background: rgba(0, 0, 0, 0.5);
+      padding: 40px 60px;
+      border-radius: 20px;
+      text-align: center;
+      max-width: 90%;
+    }
+
+    /* Logos */
+    .logo-top,
+    .logo-bottom {
+      width: 600px;
+      height: auto;
+      margin: 20px 0;
+    }
+
+    /* Responsive pour petits écrans */
+    @media (max-width: 700px) {
+      .logo-top, .logo-bottom { width: 300px; }
+      #qrImage { width: 300px; height: 300px; }
+      #paymentLink { font-size: 24px; }
+      button { font-size: 24px; padding: 15px 30px; }
+      select { font-size: 20px; padding: 8px; }
+    }
+  </style>
 </head>
 <body>
-    <!-- Image en haut -->
-    <img src="logo-haut.png" alt="Logo haut" class="logo-top" />
+  <!-- Logo haut -->
+  <img src="logo-haut.png" alt="Logo haut" class="logo-top" />
 
-    <!-- Contenu principal -->
-    <div class="content">
-        <h1>Recharge ton vélo électrique</h1>
+  <!-- Contenu principal -->
+  <main class="content" role="main">
+    <h1>Recharge ton vélo électrique</h1>
+    <p>Choisis une durée de recharge :</p>
+    <label for="duration" class="visually-hidden">Durée</label>
+    <select id="duration">
+      <option value="30">30 minutes - CHF 1.50</option>
+      <option value="60">1 heure - CHF 2.00</option>
+      <option value="120">2 heures - CHF 2.50</option>
+      <option value="180">3 heures - CHF 3.00</option>
+    </select>
 
-        <p>Choisis une durée de recharge :</p>
-        <select id="duration">
-            <option value="30">30 minutes - CHF 1.50</option>
-            <option value="60">1 heure - CHF 2.00</option>
-            <option value="120">2 heures - CHF 2.50</option>
-            <option value="180">3 heures - CHF 3.00</option>
-        </select>
+    <button id="payBtn" onclick="startPayment()">Payer avec Twint</button>
 
-        <button onclick="startPayment()">Payer avec Twint</button>
-
-        <div id="qrCodeContainer"></div>
+    <!-- Zone QR Code -->
+    <div id="qrCodeContainer">
+      <img id="qrImage" alt="QR Code TWINT" />
+      <a id="paymentLink" href="#" target="_blank" rel="noopener">Lien de paiement</a>
     </div>
+  </main>
 
-    <!-- Image en bas -->
-    <img src="logo-bas.png" alt="Logo bas" class="logo-bottom" />
+  <!-- Logo bas -->
+  <img src="logo-bas.png" alt="Logo bas" class="logo-bottom" />
 
-    <script>
-        function startPayment() {
-            const duration = document.getElementById("duration").value;
-            fetch("/pay", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ duration }),
-            })
-                .then((res) => res.json())
-                .then((data) => {
-                    document.getElementById("qrCodeContainer").innerHTML =
-                        `<img src="${data.qrCodeUrl}" alt="QR TWINT" />`;
-                });
-        }
-    </script>
+  <!-- Script pour le fetch vers ton backend -->
+  <script>
+    async function startPayment() {
+      const duration = parseInt(document.getElementById("duration").value, 10);
+
+      try {
+        const res = await fetch("http://172.20.10.2:8000/pay", {  // <-- IP de ton PC
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ duration }),
+        });
+
+        if (!res.ok) throw new Error("Erreur lors de la création du paiement.");
+
+        const data = await res.json();
+
+        // Afficher le QR code + lien
+        document.getElementById("qrImage").src = "data:image/png;base64," + data.qrCodeBase64;
+        document.getElementById("paymentLink").href = data.paymentUrl;
+        document.getElementById("qrCodeContainer").style.display = "block";
+      } catch (err) {
+        alert(err.message);
+      }
+    }
+  </script>
 </body>
 </html>

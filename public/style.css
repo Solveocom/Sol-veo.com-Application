@@ -1,14 +1,23 @@
 /* style.css */
 
-/* Image de fond pleine page */
+/* Accessibilité : classe utilitaire pour libeller le select sans afficher le texte */
+.visually-hidden {
+  position: absolute !important;
+  height: 1px; width: 1px;
+  overflow: hidden;
+  clip: rect(1px, 1px, 1px, 1px);
+  white-space: nowrap;
+  border: 0; padding: 0; margin: -1px;
+}
+
+/* Fond plein écran + lisibilité renforcée */
 body {
   margin: 0;
   padding: 0;
-  background-image: url('background.png');
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  height: 100vh;
+  min-height: 100dvh; /* meilleure gestion mobile */
+  background:
+    linear-gradient(rgba(0,0,0,0.45), rgba(0,0,0,0.45)),
+    url('background.png') center/cover no-repeat;
   font-family: Arial, sans-serif;
   color: #fff;
   display: flex;
@@ -17,68 +26,81 @@ body {
   align-items: center;
 }
 
-/* Logos en haut et en bas */
+/* Logos très grands mais contenus dans l'écran */
 .logo-top,
 .logo-bottom {
-  width: 400px; /* 2x plus grand que 200px */
+  max-width: 95vw;   /* s’adapte à l’écran */
   height: auto;
-  margin: 20px 0;
+  margin: 18px 0;
 }
 
-/* Contenu central */
+/* Bloc central très lisible et large */
 .content {
-  background: rgba(0, 0, 0, 0.5); /* fond semi-transparent pour lisibilité */
-  padding: 20px 40px;
-  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.6);
+  width: 95%;
+  max-width: 640px;      /* plus large qu’avant (≈3x) */
+  padding: 32px;         /* augmenté */
+  border-radius: 16px;
   text-align: center;
-  max-width: 320px;
+  box-sizing: border-box;
 }
 
-/* Select déroulant */
+/* Titres et textes beaucoup plus grands */
+.content h1 {
+  margin: 0 0 16px 0;
+  font-size: 42px;       /* ~3x */
+  line-height: 1.15;
+}
+
+.content p {
+  margin: 10px 0 14px 0;
+  font-size: 24px;       /* ~3x */
+}
+
+/* Select déroulant : très grand, plein large */
 select {
-  padding: 8px;
-  font-size: 16px;
-  border-radius: 5px;
+  width: 100%;
+  padding: 16px;         /* augmenté */
+  font-size: 24px;       /* ~3x, évite le zoom iOS */
+  border-radius: 12px;
   border: none;
-  margin-top: 10px;
+  margin-top: 14px;
+  box-sizing: border-box;
 }
 
-/* Bouton Twint */
+/* Bouton Twint : très grand, plein large */
 button {
-  margin-top: 15px;
-  padding: 10px 20px;
-  font-size: 16px;
+  margin-top: 20px;
+  width: 100%;
+  padding: 20px;         /* augmenté */
+  font-size: 28px;       /* ~3x */
   background-color: #00b24c;
   border: none;
-  border-radius: 5px;
+  border-radius: 12px;
   color: white;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: background-color 0.2s ease, transform 0.05s ease;
 }
 
-button:hover {
-  background-color: #008933;
-}
+button:hover { background-color: #008933; }
+button:active { transform: scale(0.98); }
 
-/* QR Code */
+/* QR Code bien grand mais contenu dans l’écran */
 #qrCodeContainer img {
-  margin-top: 15px;
-  width: 200px;
-  height: 200px;
-  border-radius: 10px;
-  box-shadow: 0 0 10px #00b24c;
+  margin-top: 18px;
+  width: 90vw;           /* s’adapte */
+  max-width: 420px;      /* grand mais raisonnable sur smartphone */
+  height: auto;
+  border-radius: 12px;
+  box-shadow: 0 0 14px #00b24c;
 }
 
-/* Responsive : réduit un peu la taille des logos et contenu sur petits écrans */
-@media (max-width: 400px) {
-  .logo-top,
-  .logo-bottom {
-    width: 200px; /* réduit la taille à 200px sur petits écrans */
-  }
-
-  .content {
-    max-width: 90%;
-    padding: 15px 20px;
-  }
-
-  #qrCodeContai
+/* Ajustements très petits écrans */
+@media (max-width: 360px) {
+  .content { padding: 24px; }
+  .content h1 { font-size: 36px; }
+  .content p { font-size: 22px; }
+  select { font-size: 22px; padding: 14px; }
+  button { font-size: 26px; padding: 18px; }
+  #qrCodeContainer img { max-width: 360px; }
+}
