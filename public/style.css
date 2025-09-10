@@ -14,7 +14,7 @@
 body {
   margin: 0;
   padding: 0;
-  min-height: 100dvh; /* meilleure gestion mobile */
+  min-height: 100dvh;
   background:
     linear-gradient(rgba(0,0,0,0.45), rgba(0,0,0,0.45)),
     url('background.png') center/cover no-repeat;
@@ -22,58 +22,50 @@ body {
   color: #fff;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: center; /* centre le contenu verticalement */
   align-items: center;
-}
-
-/* Logos très grands mais contenus dans l'écran */
-.logo-top,
-.logo-bottom {
-  max-width: 95vw;   /* s’adapte à l’écran */
-  height: auto;
-  margin: 18px 0;
 }
 
 /* Bloc central très lisible et large */
 .content {
   background: rgba(0, 0, 0, 0.6);
   width: 95%;
-  max-width: 640px;      /* plus large qu’avant (≈3x) */
-  padding: 32px;         /* augmenté */
+  max-width: 640px;
+  padding: 32px;
   border-radius: 16px;
   text-align: center;
   box-sizing: border-box;
 }
 
-/* Titres et textes beaucoup plus grands */
+/* Titres et textes */
 .content h1 {
   margin: 0 0 16px 0;
-  font-size: 42px;       /* ~3x */
+  font-size: 42px;
   line-height: 1.15;
 }
 
 .content p {
   margin: 10px 0 14px 0;
-  font-size: 24px;       /* ~3x */
+  font-size: 24px;
 }
 
 /* Select déroulant : très grand, plein large */
 select {
   width: 100%;
-  padding: 16px;         /* augmenté */
-  font-size: 24px;       /* ~3x, évite le zoom iOS */
+  padding: 16px;
+  font-size: 24px;
   border-radius: 12px;
   border: none;
   margin-top: 14px;
   box-sizing: border-box;
 }
 
-/* Bouton Twint : très grand, plein large */
+/* Bouton activation */
 button {
   margin-top: 20px;
   width: 100%;
-  padding: 20px;         /* augmenté */
-  font-size: 28px;       /* ~3x */
+  padding: 20px;
+  font-size: 28px;
   background-color: #00b24c;
   border: none;
   border-radius: 12px;
@@ -85,14 +77,12 @@ button {
 button:hover { background-color: #008933; }
 button:active { transform: scale(0.98); }
 
-/* QR Code bien grand mais contenu dans l’écran */
-#qrCodeContainer img {
-  margin-top: 18px;
-  width: 90vw;           /* s’adapte */
-  max-width: 420px;      /* grand mais raisonnable sur smartphone */
+/* Logos */
+.logo-top,
+.logo-bottom {
+  max-width: 95vw;
   height: auto;
-  border-radius: 12px;
-  box-shadow: 0 0 14px #00b24c;
+  margin: 18px 0;
 }
 
 /* Ajustements très petits écrans */
@@ -102,5 +92,4 @@ button:active { transform: scale(0.98); }
   .content p { font-size: 22px; }
   select { font-size: 22px; padding: 14px; }
   button { font-size: 26px; padding: 18px; }
-  #qrCodeContainer img { max-width: 360px; }
 }
