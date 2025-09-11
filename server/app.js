@@ -1,60 +1,48 @@
-import express from "express";
-import fetch from "node-fetch";
-import path from "path";
-import { fileURLToPath } from "url";
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+const express = require("express");
+const fetch = require("node-fetch");
+const path = require("path");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// ⚡ Variables Cloud Shelly
-const HOST = "shelly-200-eu.shelly.cloud";
-const DEVICE_ID = "TON_DEVICE_ID"; // Tu dois mettre ton vrai DEVICE_ID ici
+app.use(express.static(path.join(__dirname, "../public")));
+app.use(express.json());
+
+// ⚡ Configuration Shelly
+const SHELLY_HOST = "https://shelly-200-eu.shelly.cloud";
 const AUTH_KEY = "MzVkM2YzdWlkF9326A8EDA3E3AC73DD19C3FFA4F37B7E28A26EC358E5720E40A128EA243A8DA9E96FDE79B44B21A";
+const DEVICE_ID = "cc7b5c836978";
 
-// Servir les fichiers statiques (HTML/CSS/JS)
-app.use(express.static(path.join(__dirname, "public")));
+// ✅ API pour activer/désactiver le Shelly
+app.post("/api/shelly", async (req, res) => {
+  const { action } = req.body; // "on" ou "off"
 
-// Route pour activer la recharge
-app.get("/activer", async (req, res) => {
+  if (!["on", "off"].includes(action)) {
+    return res.status(400).json({ error: "Action invalide" });
+  }
+
   try {
-    const url = `https://${HOST}/device/relay/control`;
-    const params = new URLSearchParams({
-      id: DEVICE_ID,
-      auth_key: AUTH_KEY,
-      channel: "0",
-      turn: "on"
+    const response = await fetch(`${SHELLY_HOST}/device/relay/control`, {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: new URLSearchParams({
+        id: DEVICE_ID,
+        auth_key: AUTH_KEY,
+        channel: 0,
+        turn: action
+      })
     });
 
-    const response = await fetch(url, { method: "POST", body: params });
     const data = await response.json();
+    res.json(data);
 
-    res.json({ success: true, action: "on", data });
-  } catch (error) {
-    res.status(500).json({ success: false, error: error.message });
+  } catch (err) {
+    console.error("Erreur Shelly:", err);
+    res.status(500).json({ error: "Impossible de contacter Shelly" });
   }
 });
 
-// Route pour désactiver la recharge
-app.get("/desactiver", async (req, res) => {
-  try {
-    const url = `https://${HOST}/device/relay/control`;
-    const params = new URLSearchParams({
-      id: DEVICE_ID,
-      auth_key: AUTH_KEY,
-      channel: "0",
-      turn: "off"
-    });
-
-    const response = await fetch(url, { method: "POST", body: params });
-    const data = await response.json();
-
-    res.json({ success: true, action: "off", data });
-  } catch (error) {
-    res.status(500).json({ success: false, error: error.message });
-  }
+// 🚀 Lancer le serveur
+app.listen(PORT, () => {
+  console.log(`Serveur lancé sur http://localhost:${PORT}`);
 });
-
-app.listen(PORT, () => console.log(`🚲 Serveur lancé sur http://localhost:${PORT}`));

@@ -1,43 +1,51 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Recharge Vélo Électrique</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <main class="content">
     <h1>Recharge ton vélo électrique</h1>
-    <p>Choisis une durée de recharge :</p>
+    <p>Choisis une durée :</p>
     <select id="duration">
       <option value="1">1 minute</option>
       <option value="5">5 minutes</option>
       <option value="10">10 minutes</option>
     </select>
-
-    <button id="activationButton">Activer la recharge</button>
+    <button onclick="activer()">Activer la recharge</button>
   </main>
 
   <script>
-    document.getElementById("activationButton").addEventListener("click", () => {
+    function activer() {
       const duration = parseInt(document.getElementById("duration").value);
 
-      fetch("/activer")
-        .then(res => res.json())
-        .then(data => {
-          alert(`Recharge activée pour ${duration} minutes !`);
+      // Activation Shelly via notre backend
+      fetch("/api/shelly", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "on" })
+      })
+      .then(res => res.json())
+      .then(data => {
+        alert(`Recharge activée pour ${duration} minutes !`);
+        console.log("Shelly activé :", data);
 
-          setTimeout(() => {
-            fetch("/desactiver")
-              .then(res => res.json())
-              .then(data => console.log("Recharge arrêtée :", data));
-          }, duration * 60 * 1000);
-        })
-        .catch(err => {
-          alert("Erreur : " + err.message);
-          console.error(err);
-        });
-    });
+        // Timer pour arrêter après X minutes
+        setTimeout(() => {
+          fetch("/api/shelly", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ action: "off" })
+          })
+          .then(res => res.json())
+          .then(data => console.log("Shelly désactivé :", data));
+        }, duration * 60 * 1000);
+      })
+      .catch(err => alert("Erreur: " + err.message));
+    }
   </script>
 </body>
 </html>
