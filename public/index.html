@@ -1,52 +1,53 @@
 <!DOCTYPE html>
 <html lang="fr">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Recharge Vélo Électrique</title>
-  <link rel="stylesheet" href="style.css" />
-</head>
-<body>
-  <main class="content">
-    <h1>Recharge ton vélo électrique</h1>
-    <p>Choisis une durée :</p>
-    <select id="duration">
-      <option value="1">1 minute</option>
-      <option value="5">5 minutes</option>
-      <option value="10">10 minutes</option>
-    </select>
-    <button onclick="activer()">Activer la recharge</button>
-  </main>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Contrôle Recharge Vélo</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        text-align: center;
+        margin-top: 50px;
+      }
+      button {
+        font-size: 20px;
+        padding: 15px 30px;
+        margin: 20px;
+        cursor: pointer;
+        border: none;
+        border-radius: 10px;
+      }
+      .on {
+        background-color: #4caf50;
+        color: white;
+      }
+      .off {
+        background-color: #f44336;
+        color: white;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Recharge Vélo Solvéo</h1>
+    <button class="on" onclick="controlShelly('on')">Démarrer recharge</button>
+    <button class="off" onclick="controlShelly('off')">Arrêter recharge</button>
 
-  <script>
-    function activer() {
-      const duration = parseInt(document.getElementById("duration").value);
+    <p id="status"></p>
 
-      // Activation Shelly via notre backend
-      fetch("/api/shelly", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ action: "on" })
-      })
-      .then(res => res.json())
-      .then(data => {
-        alert(`Recharge activée pour ${duration} minutes !`);
-        console.log("Shelly activé :", data);
-
-        // Timer pour arrêter après X minutes
-        setTimeout(() => {
-          fetch("/api/shelly", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ action: "off" })
-          })
-          .then(res => res.json())
-          .then(data => console.log("Shelly désactivé :", data));
-        }, duration * 60 * 1000);
-      })
-      .catch(err => alert("Erreur: " + err.message));
-    }
-  </script>
-</body>
+    <script>
+      async function controlShelly(action) {
+        try {
+          const res = await fetch(`/api/shelly/${action}`, { method: "POST" });
+          const data = await res.json();
+          document.getElementById("status").innerText =
+            data.success && data.data.isok
+              ? `✅ Commande envoyée : ${action}`
+              : `⚠️ Erreur : ${JSON.stringify(data)}`;
+        } catch (err) {
+          document.getElementById("status").innerText =
+            "❌ Erreur de communication avec le serveur";
+        }
+      }
+    </script>
+  </body>
 </html>
-
