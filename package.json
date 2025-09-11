@@ -1,14 +1,17 @@
 {
   "name": "recharge-velo",
   "version": "1.0.0",
-  "description": "Application de recharge vélo via Shelly Cloud",
+  "description": "Application Recharge Vélo Solvéo",
   "main": "server.js",
-  "type": "module",
   "scripts": {
     "start": "node server.js"
   },
   "dependencies": {
-    "express": "^4.19.2",
-    "node-fetch": "^3.3.2"
-  }
+    "express": "^4.21.2"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "author": "TonNom",
+  "license": "MIT"
 }
