@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Recharge Vélo Électrique - Test</title>
+  <title>Recharge Vélo Électrique</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <main class="content" role="main">
-    <h1>Recharge ton vélo électrique (Test)</h1>
+    <h1>Recharge ton vélo électrique</h1>
     <p>Choisis une durée de recharge :</p>
     <select id="duration">
       <option value="1">1 minute</option>
@@ -20,28 +20,27 @@
   </main>
 
   <script>
-    function activerShelly() {
+    async function activerShelly() {
       const duration = parseInt(document.getElementById("duration").value);
 
-      // Activation Shelly
-      fetch('http://192.168.1.27/rpc/Switch.Set?id=0&on=true')
-        .then(res => res.json())
-        .then(data => {
-          alert(`Recharge activée pour ${duration} minutes !`);
-          console.log("Shelly activé :", data);
-
-          // Timer pour désactiver
-          setTimeout(() => {
-            fetch('http://192.168.1.27/rpc/Switch.Set?id=0&on=false')
-              .then(res => res.json())
-              .then(data => console.log("Shelly désactivé :", data))
-              .catch(err => console.error("Erreur désactivation :", err));
-          }, duration * 60 * 1000);
-        })
-        .catch(err => {
-          alert("Erreur lors de l’activation : " + err.message);
-          console.error(err);
+      try {
+        // URL du serveur via Ngrok
+        const res = await fetch('https://3015141bd6c2.ngrok-free.app/activate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ duration })
         });
+
+        const data = await res.json();
+        if (data.success) {
+          alert(`Recharge activée pour ${duration} minutes !`);
+        } else {
+          alert(`Erreur : ${data.message}`);
+        }
+      } catch (err) {
+        alert("Erreur lors de l’activation : " + err.message);
+        console.error(err);
+      }
     }
   </script>
 </body>

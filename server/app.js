@@ -1,46 +1,42 @@
-const express = require('express');
-const fetch = require('node-fetch'); // npm install node-fetch
-const path = require('path');
+import express from "express";
+import fetch from "node-fetch";
+
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
-app.use(express.static(path.join(__dirname, '..', 'public')));
-app.use(express.json());
+// Données Shelly (à stocker dans les variables d’environnement Render !)
+const SHELLY_HOST = process.env.SHELLY_HOST;       // ex: "shelly-48-eu.shelly.cloud"
+const SHELLY_DEVICE_ID = process.env.SHELLY_DEVICE_ID;
+const SHELLY_AUTH_KEY = process.env.SHELLY_AUTH_KEY;
 
-// Endpoint pour activer la recharge
-app.post('/activate', async (req, res) => {
-    const { duration } = req.body; // durée en minutes
-    console.log(`🔹 Activation demandée pour ${duration} minutes`);
+app.get("/on", async (req, res) => {
+  const url = `https://${SHELLY_HOST}/device/relay/control`;
+  const body = `id=${SHELLY_DEVICE_ID}&auth_key=${SHELLY_AUTH_KEY}&channel=0&turn=on`;
 
-    const shellyUrlOn = 'http://192.168.1.27/rpc/Switch.Set?id=0&on=true';
-    const shellyUrlOff = 'http://192.168.1.27/rpc/Switch.Set?id=0&on=false';
+  const response = await fetch(url, {
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body,
+  });
 
-    try {
-        // Activation Shelly
-        const response = await fetch(shellyUrlOn);
-        if (!response.ok) throw new Error("Erreur activation Shelly");
-        const data = await response.json();
-        console.log("⚡ Shelly activé :", data);
+  const result = await response.json();
+  res.json(result);
+});
 
-        // Démarrer timer pour désactivation
-        setTimeout(async () => {
-            try {
-                const resOff = await fetch(shellyUrlOff);
-                if (!resOff.ok) throw new Error("Erreur désactivation Shelly");
-                const dataOff = await resOff.json();
-                console.log("⛔ Shelly désactivé :", dataOff);
-            } catch (err) {
-                console.error(err.message);
-            }
-        }, duration * 60 * 1000);
+app.get("/off", async (req, res) => {
+  const url = `https://${SHELLY_HOST}/device/relay/control`;
+  const body = `id=${SHELLY_DEVICE_ID}&auth_key=${SHELLY_AUTH_KEY}&channel=0&turn=off`;
 
-        res.json({ success: true, message: `Recharge activée pour ${duration} minutes` });
-    } catch (error) {
-        console.error(error.message);
-        res.status(500).json({ success: false, message: error.message });
-    }
+  const response = await fetch(url, {
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body,
+  });
+
+  const result = await response.json();
+  res.json(result);
 });
 
 app.listen(PORT, () => {
-    console.log(`✅ Serveur lancé sur http://localhost:${PORT}`);
+  console.log(`Server running on port ${PORT}`);
 });
