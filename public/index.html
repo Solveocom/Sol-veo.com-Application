@@ -1,53 +1,126 @@
 <!DOCTYPE html>
 <html lang="fr">
-  <head>
-    <meta charset="UTF-8" />
-    <title>Contrôle Recharge Vélo</title>
-    <style>
-      body {
-        font-family: Arial, sans-serif;
-        text-align: center;
-        margin-top: 50px;
-      }
-      button {
-        font-size: 20px;
-        padding: 15px 30px;
-        margin: 20px;
-        cursor: pointer;
-        border: none;
-        border-radius: 10px;
-      }
-      .on {
-        background-color: #4caf50;
-        color: white;
-      }
-      .off {
-        background-color: #f44336;
-        color: white;
-      }
-    </style>
-  </head>
-  <body>
-    <h1>Recharge Vélo Solvéo</h1>
-    <button class="on" onclick="controlShelly('on')">Démarrer recharge</button>
-    <button class="off" onclick="controlShelly('off')">Arrêter recharge</button>
+<head>
+  <meta charset="UTF-8" />
+  <title>Contrôle Recharge Vélo</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin-top: 50px;
+      background-color: #f0f0f0;
+    }
 
-    <p id="status"></p>
+    h1 {
+      color: #333;
+    }
 
-    <script>
-      async function controlShelly(action) {
-        try {
-          const res = await fetch(`/api/shelly/${action}`, { method: "POST" });
-          const data = await res.json();
-          document.getElementById("status").innerText =
-            data.success && data.data.isok
-              ? `✅ Commande envoyée : ${action}`
-              : `⚠️ Erreur : ${JSON.stringify(data)}`;
-        } catch (err) {
-          document.getElementById("status").innerText =
-            "❌ Erreur de communication avec le serveur";
+    button {
+      font-size: 20px;
+      padding: 15px 30px;
+      margin: 20px;
+      cursor: pointer;
+      border: none;
+      border-radius: 10px;
+      transition: background-color 0.3s ease;
+    }
+
+    .on {
+      background-color: #4caf50;
+      color: white;
+    }
+
+    .on:hover {
+      background-color: #43a047;
+    }
+
+    .off {
+      background-color: #f44336;
+      color: white;
+    }
+
+    .off:hover {
+      background-color: #e53935;
+    }
+
+    #status {
+      font-size: 18px;
+      margin-top: 30px;
+      color: #333;
+    }
+
+    #tarif {
+      font-size: 20px;
+      color: #333;
+      margin-top: 10px;
+    }
+
+    select {
+      font-size: 18px;
+      padding: 10px;
+      border-radius: 8px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Recharge Vélo Solvéo</h1>
+
+  <!-- Sélecteur de durée -->
+  <label for="duree">Choisissez la durée :</label>
+  <select id="duree" onchange="updateTarif()">
+    <option value="1">1h</option>
+    <option value="2">2h</option>
+    <option value="3">3h</option>
+  </select>
+
+  <div id="tarif">💰 Tarif : 2.00 CHF</div>
+
+  <button class="on" onclick="controlShelly('on')">🚴‍♂️ Démarrer recharge</button>
+  <button class="off" onclick="controlShelly('off')">⛔ Arrêter recharge</button>
+
+  <p id="status">État : En attente d'une action...</p>
+
+  <script>
+    const tarifs = {
+      1: 2.0,
+      2: 2.5,
+      3: 3.0
+    };
+
+    function updateTarif() {
+      const duree = document.getElementById("duree").value;
+      const tarif = tarifs[duree];
+      document.getElementById("tarif").innerText = `💰 Tarif : ${tarif.toFixed(2)} CHF`;
+    }
+
+    async function controlShelly(action) {
+      const status = document.getElementById("status");
+      const duree = document.getElementById("duree").value;
+      const tarif = tarifs[duree];
+
+      status.innerText = `⏳ Envoi de la commande "${action}"...`;
+
+      try {
+        const res = await fetch(`/api/shelly/${action}`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ duree, tarif }) // envoie optionnel
+        });
+
+        const data = await res.json();
+
+        if (data.success && data.data?.isok) {
+          status.innerText = `✅ Recharge ${action === 'on' ? 'démarrée' : 'arrêtée'} pour ${duree}h (Tarif : ${tarif.toFixed(2)} CHF)`;
+        } else {
+          status.innerText = `⚠️ Erreur : ${JSON.stringify(data)}`;
         }
+      } catch (err) {
+        status.innerText = "❌ Erreur de communication avec le serveur";
       }
-    </script>
-  </body>
+    }
+
+    // Affiche le tarif par défaut au chargement
+    updateTarif();
+  </script>
+</body>
 </html>
