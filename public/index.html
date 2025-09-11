@@ -1,13 +1,12 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
   <title>Recharge Vélo Électrique</title>
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <main class="content" role="main">
+  <main class="content">
     <h1>Recharge ton vélo électrique</h1>
     <p>Choisis une durée de recharge :</p>
     <select id="duration">
@@ -16,32 +15,30 @@
       <option value="10">10 minutes</option>
     </select>
 
-    <button id="activationButton" onclick="activerShelly()">Activer la recharge</button>
+    <button id="activationButton">Activer la recharge</button>
   </main>
 
   <script>
-    async function activerShelly() {
+    document.getElementById("activationButton").addEventListener("click", () => {
       const duration = parseInt(document.getElementById("duration").value);
 
-      try {
-        // URL du serveur via Ngrok
-        const res = await fetch('https://3015141bd6c2.ngrok-free.app/activate', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ duration })
-        });
-
-        const data = await res.json();
-        if (data.success) {
+      fetch("/activer")
+        .then(res => res.json())
+        .then(data => {
           alert(`Recharge activée pour ${duration} minutes !`);
-        } else {
-          alert(`Erreur : ${data.message}`);
-        }
-      } catch (err) {
-        alert("Erreur lors de l’activation : " + err.message);
-        console.error(err);
-      }
-    }
+
+          setTimeout(() => {
+            fetch("/desactiver")
+              .then(res => res.json())
+              .then(data => console.log("Recharge arrêtée :", data));
+          }, duration * 60 * 1000);
+        })
+        .catch(err => {
+          alert("Erreur : " + err.message);
+          console.error(err);
+        });
+    });
   </script>
 </body>
 </html>
+
