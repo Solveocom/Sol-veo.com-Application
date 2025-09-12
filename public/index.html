@@ -34,15 +34,6 @@
       background-color: #43a047;
     }
 
-    .off {
-      background-color: #f44336;
-      color: white;
-    }
-
-    .off:hover {
-      background-color: #e53935;
-    }
-
     #status {
       font-size: 18px;
       margin-top: 30px;
@@ -76,7 +67,6 @@
   <div id="tarif">💰 Tarif : 2.00 CHF</div>
 
   <button class="on" onclick="controlShelly('on')">🚴‍♂️ Démarrer recharge</button>
-  <button class="off" onclick="controlShelly('off')">⛔ Arrêter recharge</button>
 
   <p id="status">État : En attente d'une action...</p>
 
@@ -104,13 +94,13 @@
         const res = await fetch(`/api/shelly/${action}`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ duree, tarif }) // envoie optionnel
+          body: JSON.stringify({ duree, tarif })
         });
 
         const data = await res.json();
 
         if (data.success && data.data?.isok) {
-          status.innerText = `✅ Recharge ${action === 'on' ? 'démarrée' : 'arrêtée'} pour ${duree}h (Tarif : ${tarif.toFixed(2)} CHF)`;
+          status.innerText = `✅ Recharge démarrée pour ${duree}h (Tarif : ${tarif.toFixed(2)} CHF)`;
         } else {
           status.innerText = `⚠️ Erreur : ${JSON.stringify(data)}`;
         }
