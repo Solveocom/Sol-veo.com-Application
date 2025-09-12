@@ -1,32 +1,43 @@
+// server/app.js
 const express = require('express');
 const path = require('path');
 const app = express();
 
-app.use(express.json()); // Pour parser JSON dans les POST
+// Middleware pour parser le JSON
+app.use(express.json());
 
-// Servir les fichiers statiques depuis le dossier 'server' (ou 'public' si tu préfères)
-app.use(express.static(path.join(__dirname)));
+// Sert les fichiers statiques depuis le dossier public
+app.use(express.static(path.join(__dirname, '../public')));
 
-// Route racine pour servir index.html
+// Route racine qui envoie le bon index.html
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'index.html'));
+  res.sendFile(path.join(__dirname, '../public/index.html'));
 });
 
-// Exemple simple d'API pour démarrer la recharge
-app.post('/api/shelly/on', (req, res) => {
+// Endpoint API simulé
+app.post('/api/shelly/:action', (req, res) => {
+  const { action } = req.params;
   const { duree, tarif } = req.body;
 
-  console.log(`Démarrage de la recharge pour ${duree}h avec un tarif de ${tarif} CHF`);
+  console.log(`Commande reçue : ${action}, Durée : ${duree}h, Tarif : ${tarif} CHF`);
 
-  // Ici, place ta logique pour commander ton système Shelly
-  // Par exemple appel d'une API, commande réseau, etc.
-
-  // Répond avec succès simulé
-  res.json({ success: true, data: { isok: true } });
+  if (action === 'on' || action === 'off') {
+    res.json({
+      success: true,
+      data: {
+        isok: true,
+        action,
+        duree,
+        tarif
+      }
+    });
+  } else {
+    res.status(400).json({ success: false, error: 'Action invalide' });
+  }
 });
 
-// Port de l’application (Render ou local)
+// Démarre le serveur
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log(`✅ Serveur démarré sur le port ${PORT}`);
+  console.log(`✅ Serveur en ligne sur le port ${PORT}`);
 });
