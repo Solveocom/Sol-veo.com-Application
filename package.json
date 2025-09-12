@@ -2,7 +2,7 @@
   "name": "recharge-velo",
   "version": "1.0.0",
   "description": "Application Recharge Vélo Solvéo",
-  "main": "server.js",
+  "main": "server/app.js",
   "scripts": {
     "start": "node server/app.js"
   },
