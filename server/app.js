@@ -1,6 +1,7 @@
 const express = require('express');
 const path = require('path');
-const mqtt = require('mqtt'); // <--- ajout
+const fs = require('fs');
+const mqtt = require('mqtt');
 const app = express();
 
 app.use(express.json());
@@ -10,15 +11,22 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, '../public/index.html'));
 });
 
-// === Config MQTT ===
-const MQTT_HOST = 'mqtt://192.168.1.27';
-const MQTT_PORT = 1883;
+// === Config MQTT SSL ===
+const MQTT_HOST = 'mqtts://192.168.1.27';  // mqtts:// pour SSL
+const MQTT_PORT = 8883;                     // port standard MQTT SSL
 const SHELLY_TOPIC = 'shellyplus1pm-cc7b5c836978/rpc';
 
-const mqttClient = mqtt.connect(`${MQTT_HOST}:${MQTT_PORT}`);
+// Charger le certificat CA personnalisé
+const caFilePath = path.join(__dirname, 'user_ca.pem');  // adapte le chemin si besoin
+const caCert = fs.readFileSync(caFilePath);
+
+const mqttClient = mqtt.connect(`${MQTT_HOST}:${MQTT_PORT}`, {
+  ca: caCert,
+  rejectUnauthorized: true  // vérifie la validité du certificat
+});
 
 mqttClient.on('connect', () => {
-  console.log('📡 Connecté au broker MQTT');
+  console.log('📡 Connecté au broker MQTT avec TLS');
 });
 
 mqttClient.on('error', (err) => {
