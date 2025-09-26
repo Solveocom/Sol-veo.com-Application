@@ -8,10 +8,18 @@
       font-family: Arial, sans-serif;
       text-align: center;
       margin: 0;
-      padding: 80px 20px;
-      background: url("/background.png") no-repeat center center fixed;
-      background-size: 50% auto;
+      padding: 80px 20px 20px 20px; /* padding-bottom réduit pour laisser la partie basse libre */
+      background: none; /* on enlève le background global */
       color: #333;
+    }
+
+    /* Div du background en haut */
+    .background-top {
+      background: url("/background.png") no-repeat top center;
+      background-size: 50% auto; /* moitié de la taille originale */
+      height: 600px; /* hauteur du background en haut */
+      width: 100%;
+      margin-bottom: 40px;
     }
 
     h1 {
@@ -47,7 +55,6 @@
       transition: background-color 0.3s ease;
     }
 
-    /* Bouton noir */
     button.on {
       background-color: #000000; 
       color: white;
@@ -74,10 +81,15 @@
   </style>
 </head>
 <body>
+  <!-- Background en haut -->
+  <div class="background-top"></div>
+
+  <!-- Logo du haut -->
   <img src="/logo-haut.png" alt="Logo haut" class="logo-haut" />
 
   <h1>Recharge Vélo Solvéo</h1>
 
+  <!-- Sélecteur de durée -->
   <label for="duree">Choisissez la durée :</label>
   <select id="duree" onchange="updateTarif()">
     <option value="1">1h</option>
@@ -91,6 +103,7 @@
 
   <p id="status">État : En attente d'une action...</p>
 
+  <!-- Logo du bas -->
   <img src="/logo-bas.png" alt="Logo bas" class="logo-bas" />
 
   <script>
