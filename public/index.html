@@ -8,7 +8,8 @@
       font-family: Arial, sans-serif;
       text-align: center;
       margin-top: 50px;
-      background-color: #f0f0f0;
+      background: url("/background.png") no-repeat center center fixed;
+      background-size: cover;
     }
 
     h1 {
@@ -51,9 +52,22 @@
       padding: 10px;
       border-radius: 8px;
     }
+
+    .logo-haut {
+      width: 150px;
+      margin-bottom: 20px;
+    }
+
+    .logo-bas {
+      width: 120px;
+      margin-top: 40px;
+    }
   </style>
 </head>
 <body>
+  <!-- Logo du haut -->
+  <img src="/logo-haut.png" alt="Logo haut" class="logo-haut" />
+
   <h1>Recharge Vélo Solvéo</h1>
 
   <!-- Sélecteur de durée -->
@@ -69,6 +83,9 @@
   <button class="on" onclick="controlShelly('on')">🚴‍♂️ Démarrer recharge</button>
 
   <p id="status">État : En attente d'une action...</p>
+
+  <!-- Logo du bas -->
+  <img src="/logo-bas.png" alt="Logo bas" class="logo-bas" />
 
   <script>
     const tarifs = {
