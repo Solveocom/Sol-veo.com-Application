@@ -6,75 +6,52 @@
   <style>
     body {
       font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 0 20px;
       text-align: center;
+      margin: 0;
+      padding: 80px 20px 20px 20px;
+      background: none;
       color: #333;
     }
 
-    /* Background en haut avec texte centré dessus */
-    .hero {
-      background: url("/background.png") no-repeat center top;
-      background-size: 50% auto; /* taille moitié */
-      height: 600px; /* hauteur du background */
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
+    /* Div du background en haut */
+    .background-top {
+      background: url("/background.png") no-repeat top center;
+      background-size: 50% auto;
+      height: 600px;
+      width: 100%;
       margin-bottom: 40px;
-      position: relative;
-      z-index: 0;
     }
 
-    .hero h1 {
-      font-size: 6rem;
-      margin: 0;
-      z-index: 1;
+    h1 {
+      font-size: 6rem; /* 4rem * 1.5 */
+      margin-bottom: 90px; /* 60px * 1.5 */
     }
 
-    .hero p {
-      font-size: 2.5rem;
-      margin-top: 20px;
-      z-index: 1;
-    }
-
-    /* Logos */
-    .logo-haut {
-      width: 1000px;
-      margin-bottom: 80px;
-    }
-
-    .logo-bas {
-      width: 800px;
-      margin-top: 120px;
-    }
-
-    /* Sélecteur et bouton */
     label {
-      font-size: 3rem;
+      font-size: 3rem; /* 2rem * 1.5 */
       display: block;
-      margin-bottom: 30px;
+      margin-bottom: 30px; /* 20px * 1.5 */
     }
 
     select {
-      font-size: 3rem;
-      padding: 24px 45px;
-      border-radius: 18px;
-      margin-bottom: 60px;
+      font-size: 3rem; /* 2rem * 1.5 */
+      padding: 24px 45px; /* 16px/30px * 1.5 */
+      border-radius: 18px; /* 12px * 1.5 */
+      margin-bottom: 60px; /* 40px * 1.5 */
     }
 
     #tarif {
-      font-size: 3.75rem;
-      margin-bottom: 90px;
+      font-size: 3.75rem; /* 2.5rem * 1.5 */
+      margin-bottom: 90px; /* 60px * 1.5 */
     }
 
     button {
-      font-size: 3.75rem;
-      padding: 45px 120px;
-      margin: 45px;
+      font-size: 3.75rem; /* 2.5rem * 1.5 */
+      padding: 45px 120px; /* 30px/80px * 1.5 */
+      margin: 45px; /* 30px * 1.5 */
       cursor: pointer;
       border: none;
-      border-radius: 30px;
+      border-radius: 30px; /* 20px * 1.5 */
       transition: background-color 0.3s ease;
     }
 
@@ -88,24 +65,29 @@
     }
 
     #status {
-      font-size: 3rem;
-      margin-top: 60px;
+      font-size: 3rem; /* 2rem * 1.5 */
+      margin-top: 60px; /* 40px * 1.5 */
     }
 
+    .logo-haut {
+      width: 1000px; 
+      margin-bottom: 80px;
+    }
+
+    .logo-bas {
+      width: 800px; 
+      margin-top: 120px;
+    }
   </style>
 </head>
 <body>
+  <div class="background-top"></div>
 
   <!-- Logo du haut -->
   <img src="/logo-haut.png" alt="Logo haut" class="logo-haut" />
 
-  <!-- Hero avec background -->
-  <div class="hero">
-    <h1>Solvéo</h1>
-    <p>Le soleil au service de la mobilité douce</p>
-  </div>
+  <h1>Recharge Vélo Solvéo</h1>
 
-  <!-- Sélecteur de durée -->
   <label for="duree">Choisissez la durée :</label>
   <select id="duree" onchange="updateTarif()">
     <option value="1">1h</option>
