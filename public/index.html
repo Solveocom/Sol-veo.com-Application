@@ -7,22 +7,43 @@
     body {
       font-family: Arial, sans-serif;
       text-align: center;
-      margin-top: 50px;
+      margin: 0;
+      padding: 50px 20px;
       background: url("/background.png") no-repeat center center fixed;
       background-size: cover;
-    }
-
-    h1 {
       color: #333;
     }
 
+    h1 {
+      font-size: 3rem; /* plus grand */
+      margin-bottom: 40px;
+    }
+
+    label {
+      font-size: 1.5rem;
+      display: block;
+      margin-bottom: 15px;
+    }
+
+    select {
+      font-size: 1.5rem;
+      padding: 12px 20px;
+      border-radius: 10px;
+      margin-bottom: 30px;
+    }
+
+    #tarif {
+      font-size: 2rem;
+      margin-bottom: 40px;
+    }
+
     button {
-      font-size: 20px;
-      padding: 15px 30px;
+      font-size: 2rem; /* plus grand */
+      padding: 20px 50px;
       margin: 20px;
       cursor: pointer;
       border: none;
-      border-radius: 10px;
+      border-radius: 15px;
       transition: background-color 0.3s ease;
     }
 
@@ -36,31 +57,18 @@
     }
 
     #status {
-      font-size: 18px;
+      font-size: 1.8rem;
       margin-top: 30px;
-      color: #333;
-    }
-
-    #tarif {
-      font-size: 20px;
-      color: #333;
-      margin-top: 10px;
-    }
-
-    select {
-      font-size: 18px;
-      padding: 10px;
-      border-radius: 8px;
     }
 
     .logo-haut {
-      width: 150px;
-      margin-bottom: 20px;
+      width: 250px; /* plus grand */
+      margin-bottom: 40px;
     }
 
     .logo-bas {
-      width: 120px;
-      margin-top: 40px;
+      width: 200px; /* plus grand */
+      margin-top: 60px;
     }
   </style>
 </head>
@@ -126,8 +134,8 @@
       }
     }
 
-    // Affiche le tarif par défaut au chargement
     updateTarif();
   </script>
 </body>
 </html>
+
