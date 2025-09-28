@@ -8,101 +8,74 @@
       font-family: Arial, sans-serif;
       text-align: center;
       margin: 0;
-      padding: 80px 30px 30px 30px;
-      background: none;
+      padding: 80px 20px;
+      background: url("/background.png") no-repeat center center fixed;
+      background-size: cover;
       color: #333;
     }
 
-    /* Background au milieu */
-    .background-middle {
-      background: url("/background.png") no-repeat center center;
-      background-size: 50% auto;
-      height: 900px;
-      width: 100%;
-      display: flex;
-      flex-direction: column;
-      justify-content: center; /* centre verticalement */
-      align-items: center;     /* centre horizontalement */
-      margin-bottom: 40px;
-      position: relative;
-    }
-
-    .background-middle h1 {
-      font-size: 6rem;
-      margin: 0;
-    }
-
-    .background-middle p {
-      font-size: 3rem;
-      margin-top: 20px;
-    }
-
-    label {
-      font-size: 3rem;
-      display: block;
-      margin-bottom: 30px;
-    }
-
-    select {
-      font-size: 3rem;
-      padding: 24px 45px;
-      border-radius: 18px;
+    h1 {
+      font-size: 4rem;
       margin-bottom: 60px;
     }
 
+    label {
+      font-size: 2rem;
+      display: block;
+      margin-bottom: 20px;
+    }
+
+    select {
+      font-size: 2rem;
+      padding: 16px 30px;
+      border-radius: 12px;
+      margin-bottom: 40px;
+    }
+
     #tarif {
-      font-size: 3.75rem;
-      margin-bottom: 90px;
+      font-size: 2.5rem;
+      margin-bottom: 60px;
     }
 
     button {
-      font-size: 3.75rem;
-      padding: 45px 120px;
-      margin: 45px;
+      font-size: 2.5rem;
+      padding: 30px 80px;
+      margin: 30px;
       cursor: pointer;
       border: none;
-      border-radius: 30px;
+      border-radius: 20px;
       transition: background-color 0.3s ease;
     }
 
-    button.on {
-      background-color: #000000;
+    .on {
+      background-color: #4caf50;
       color: white;
     }
 
-    button.on:hover {
-      background-color: #333333;
+    .on:hover {
+      background-color: #43a047;
     }
 
     #status {
-      font-size: 3rem;
-      margin-top: 60px;
+      font-size: 2rem;
+      margin-top: 40px;
     }
 
     .logo-haut {
-      width: 900px; 
+      width: 1000px; /* doublé par rapport à la version précédente */
       margin-bottom: 80px;
     }
 
     .logo-bas {
-      width: 800px; 
+      width: 800px; /* doublé par rapport à la version précédente */
       margin-top: 120px;
     }
-
   </style>
 </head>
 <body>
-
   <!-- Logo du haut -->
   <img src="/logo-haut.png" alt="Logo haut" class="logo-haut" />
 
-  <!-- Background au milieu avec texte centré -->
-  <div class="background-middle">
-    <h1>Solvéo</h1>
-    <p>Le soleil au service de la mobilité douce</p>
-  </div>
-
-  <!-- Titre principal de l’application -->
   <h1>Recharge Vélo Solvéo</h1>
 
   <!-- Sélecteur de durée -->
@@ -113,9 +86,9 @@
     <option value="3">3h</option>
   </select>
 
-  <div id="tarif"> Tarif : 2.00 CHF</div>
+  <div id="tarif">💰 Tarif : 2.00 CHF</div>
 
-  <button class="on" onclick="controlShelly('on')">  Démarrer recharge</button>
+  <button class="on" onclick="controlShelly('on')">🚴‍♂️ Démarrer recharge</button>
 
   <p id="status">État : En attente d'une action...</p>
 
@@ -123,12 +96,16 @@
   <img src="/logo-bas.png" alt="Logo bas" class="logo-bas" />
 
   <script>
-    const tarifs = { 1: 2.0, 2: 2.5, 3: 3.0 };
+    const tarifs = {
+      1: 2.0,
+      2: 2.5,
+      3: 3.0
+    };
 
     function updateTarif() {
       const duree = document.getElementById("duree").value;
       const tarif = tarifs[duree];
-      document.getElementById("tarif").innerText = ` Tarif : ${tarif.toFixed(2)} CHF`;
+      document.getElementById("tarif").innerText = `💰 Tarif : ${tarif.toFixed(2)} CHF`;
     }
 
     async function controlShelly(action) {
