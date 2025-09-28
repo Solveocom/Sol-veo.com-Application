@@ -76,7 +76,7 @@
   <!-- Logo du haut -->
   <img src="/logo-haut.png" alt="Logo haut" class="logo-haut" />
 
-  <h1>Recharge Vélo Solvéo</h1>
+  <h1>Recharge Vélo et Trottinette</h1>
 
   <!-- Sélecteur de durée -->
   <label for="duree">Choisissez la durée :</label>
@@ -86,9 +86,9 @@
     <option value="3">3h</option>
   </select>
 
-  <div id="tarif">💰 Tarif : 2.00 CHF</div>
+  <div id="tarif"> Tarif : 2.00 CHF</div>
 
-  <button class="on" onclick="controlShelly('on')">🚴‍♂️ Démarrer recharge</button>
+  <button class="on" onclick="controlShelly('on')">  Démarrer recharge</button>
 
   <p id="status">État : En attente d'une action...</p>
 
@@ -105,7 +105,7 @@
     function updateTarif() {
       const duree = document.getElementById("duree").value;
       const tarif = tarifs[duree];
-      document.getElementById("tarif").innerText = `💰 Tarif : ${tarif.toFixed(2)} CHF`;
+      document.getElementById("tarif").innerText = ` Tarif : ${tarif.toFixed(2)} CHF`;
     }
 
     async function controlShelly(action) {
