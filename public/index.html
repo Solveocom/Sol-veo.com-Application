@@ -9,9 +9,23 @@
       text-align: center;
       margin: 0;
       padding: 80px 30px;
-      background: url("/background.png") no-repeat center center fixed;
-      background-size: 600px auto;
+      background: none; /* on enlève le background du body */
       color: #333;
+      position: relative;
+    }
+
+    /* Background semi-transparent derrière tout le contenu */
+    body::before {
+      content: "";
+      position: fixed;       /* reste en arrière-plan même au scroll */
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: url("/background.png") no-repeat center center;
+      background-size: 600px auto;
+      opacity: 0.3;          /* transparence du background */
+      z-index: -1;           /* derrière tout le contenu */
     }
 
     h1 {
@@ -62,12 +76,12 @@
     }
 
     .logo-haut {
-      width: 800px; /* doublé par rapport à la version précédente */
+      width: 800px;
       margin-bottom: 1px;
     }
 
     .logo-bas {
-      width: 800px; /* doublé par rapport à la version précédente */
+      width: 800px;
       margin-top: 1px;
     }
   </style>
@@ -88,7 +102,7 @@
 
   <div id="tarif"> Tarif : 2.00 CHF</div>
 
-  <button class="on" onclick="controlShelly('on')">  Démarrer recharge</button>
+  <button class="on" onclick="controlShelly('on')"> Démarrer recharge</button>
 
   <p id="status">État : En attente d'une action...</p>
 
@@ -96,11 +110,7 @@
   <img src="/logo-bas.png" alt="Logo bas" class="logo-bas" />
 
   <script>
-    const tarifs = {
-      1: 2.0,
-      2: 2.5,
-      3: 3.0
-    };
+    const tarifs = { 1: 2.0, 2: 2.5, 3: 3.0 };
 
     function updateTarif() {
       const duree = document.getElementById("duree").value;
