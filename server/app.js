@@ -17,7 +17,7 @@ const AUTH_KEY  = "MzVkM2YzdWlkF9326A8EDA3E3AC73DD19C3FFA4F37B7E28A26EC358E5720E
 
 // Fonction pour envoyer une commande au Cloud
 async function controlShellyRelayCloud(turnOn = true) {
-  const url = `https://shelly-200-eu.shelly.cloud/device/relay/control;
+  const url = `https://shelly-200-eu.shelly.cloud/device/relay/control`;
   const payload = {
     id: DEVICE_ID,
     auth_key: AUTH_KEY,
