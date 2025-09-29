@@ -1,6 +1,6 @@
 const express = require('express');
 const path = require('path');
-const mqtt = require('mqtt');
+const fetch = require('node-fetch'); // npm install node-fetch
 const app = express();
 
 app.use(express.json());
@@ -10,42 +10,24 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, '../public/index.html'));
 });
 
-// === Config MQTT NON SSL ===
-const MQTT_HOST = 'mqtt://192.168.1.27';
-const MQTT_PORT = 1883;
-const SHELLY_TOPIC = 'shellyplus1pm-cc7b5c836978/rpc';
+// === Config Shelly Cloud ===
+const SHELLY_DEVICE_ID = "cc7b5c836978";
+const SHELLY_AUTH_KEY = "MzVkM2YzdWlkF9326A8EDA3E3AC73DD19C3FFA4F37B7E28A26EC358E5720E40A128EA243A8DA9E96FDE79B44B21A";
 
-// Connexion MQTT sans SSL (le port est intégré dans l'URL)
-const mqttClient = mqtt.connect(`${MQTT_HOST}:${MQTT_PORT}`);
+// Fonction pour envoyer une commande ON/OFF via Cloud API
+async function controlShellyRelayCloud(turnOn = true) {
+  const url = "https://shelly-200-eu.shelly.cloud/device/relay/control";
 
-mqttClient.on('connect', () => {
-  console.log('📡 Connecté au broker MQTT sans SSL');
-});
-
-mqttClient.on('error', (err) => {
-  console.error('❌ Erreur MQTT:', err);
-});
-
-// Fonction pour envoyer une commande MQTT au Shelly
-function controlShellyRelayMQTT(turnOn = true) {
-  const payload = {
-    id: Date.now(),
-    src: 'my_app',
-    method: 'Switch.Set',
-    params: {
-      id: 0,
-      on: turnOn
-    }
-  };
-
-  return new Promise((resolve, reject) => {
-    mqttClient.publish(SHELLY_TOPIC, JSON.stringify(payload), (err) => {
-      if (err) {
-        return reject(err);
-      }
-      resolve({ success: true, message: `Commande envoyée : ${turnOn ? 'on' : 'off'}` });
-    });
+  const params = new URLSearchParams({
+    id: SHELLY_DEVICE_ID,
+    auth_key: SHELLY_AUTH_KEY,
+    channel: 0,
+    turn: turnOn ? "on" : "off"
   });
+
+  const response = await fetch(`${url}?${params.toString()}`);
+  if (!response.ok) throw new Error(`Erreur API: ${response.statusText}`);
+  return response.json();
 }
 
 // Contrôle simple si une recharge est déjà en cours
@@ -64,18 +46,18 @@ app.post('/api/shelly/on', async (req, res) => {
   }
 
   try {
-    const result = await controlShellyRelayMQTT(true);
+    const result = await controlShellyRelayCloud(true);
     rechargeEnCours = true;
-    console.log(`✅ Recharge démarrée pour ${dureeHeures}h via MQTT :`, result);
+    console.log(`✅ Recharge démarrée pour ${dureeHeures}h via Cloud :`, result);
 
     const delayMs = dureeHeures * 60 * 60 * 1000;
 
     setTimeout(async () => {
       try {
-        const stopResult = await controlShellyRelayMQTT(false);
+        const stopResult = await controlShellyRelayCloud(false);
         console.log(`⛔ Recharge arrêtée après ${dureeHeures}h :`, stopResult);
       } catch (err) {
-        console.error('❌ Erreur arrêt automatique Shelly MQTT:', err);
+        console.error('❌ Erreur arrêt automatique Shelly Cloud:', err);
       } finally {
         rechargeEnCours = false;
       }
@@ -85,7 +67,7 @@ app.post('/api/shelly/on', async (req, res) => {
   } catch (error) {
     console.error('❌ Erreur dans /api/shelly/on:', error);
     rechargeEnCours = false;
-    return res.status(500).json({ success: false, message: 'Erreur de communication MQTT' });
+    return res.status(500).json({ success: false, message: 'Erreur de communication Cloud' });
   }
 });
 
