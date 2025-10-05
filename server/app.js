@@ -11,9 +11,9 @@ app.get("/", (req, res) => {
 });
 
 // === Config Shelly Cloud ===
-const SHELLY_CLOUD_URL = "shelly-200-eu.shelly.cloud:6022/jrpc";
-const DEVICE_ID = "224830205159800";
-const AUTH_KEY  = "MzVkM2YzdWlkF9326A8EDA3E3AC73DD19C3FFA4F37B7E28A26EC358E5720E40A128EA243A8DA9E96FDE79B44B21A"; // ⚡ Ta clé API
+const SHELLY_CLOUD_URL = "https://shelly-200-eu.shelly.cloud:6022/jrpc";
+const DEVICE_ID = "224830205159800"; // ton Device ID
+const AUTH_KEY  = "MzVkM2YzdWlkF9326A8EDA3E3AC73DD19C3FFA4F37B7E28A26EC358E5720E40A128EA243A8DA9E96FDE79B44B21A"; // ta clé API
 
 // Fonction pour envoyer une commande au Cloud
 async function controlShellyRelayCloud(turnOn = true) {
@@ -21,7 +21,7 @@ async function controlShellyRelayCloud(turnOn = true) {
     id: DEVICE_ID,
     auth_key: AUTH_KEY,
     method: "Switch.Set",
-    params: { id: 0, on: turnOn }  // id du relai (0 pour le 1er)
+    params: { id: 0, on: turnOn } // relai 0 pour le premier relais
   };
 
   const response = await fetch(SHELLY_CLOUD_URL, {
@@ -30,9 +30,8 @@ async function controlShellyRelayCloud(turnOn = true) {
     body: JSON.stringify(payload)
   });
 
-  const text = await response.text(); // Pour voir le retour complet
+  const text = await response.text(); // voir le retour complet
   if (!response.ok) throw new Error(`Erreur API Cloud : ${response.status} - ${text}`);
-  
   return JSON.parse(text);
 }
 
