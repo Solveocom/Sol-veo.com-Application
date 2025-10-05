@@ -11,7 +11,7 @@ app.get("/", (req, res) => {
 });
 
 // === Config Shelly Cloud ===
-const SHELLY_CLOUD_URL = "https://shelly-200-eu.shelly.cloud/device/relay/control";
+const SHELLY_CLOUD_URL = "shelly-200-eu.shelly.cloud:6022/jrpc";
 const DEVICE_ID = "224830205159800";
 const AUTH_KEY  = "MzVkM2YzdWlkF9326A8EDA3E3AC73DD19C3FFA4F37B7E28A26EC358E5720E40A128EA243A8DA9E96FDE79B44B21A"; // ⚡ Ta clé API
 
