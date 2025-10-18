@@ -10,29 +10,20 @@ app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "../public/index.html"));
 });
 
-// === Config Shelly Cloud ===
-const SHELLY_CLOUD_URL = "https://shelly-200-eu.shelly.cloud:6022/jrpc";
-const DEVICE_ID = "224830205159800"; // ton Device ID
-const AUTH_KEY  = "MzVkM2YzdWlkF9326A8EDA3E3AC73DD19C3FFA4F37B7E28A26EC358E5720E40A128EA243A8DA9E96FDE79B44B21A"; // ta clé API
+// === Config Shelly LAN ===
+const SHELLY_IP = "192.168.1.50"; // <-- Mets l’IP locale de ton Shelly
+const SHELLY_URL = `http://${SHELLY_IP}/rpc`;
 
-// Fonction pour envoyer une commande au Cloud
-async function controlShellyRelayCloud(turnOn = true) {
-  const payload = {
-    id: DEVICE_ID,
-    auth_key: AUTH_KEY,
-    method: "Switch.Set",
-    params: { id: 0, on: turnOn } // relai 0 pour le premier relais
-  };
+// Fonction pour envoyer une commande en LAN
+async function controlShellyRelayLAN(turnOn = true) {
+  const url = `${SHELLY_URL}/Switch.Set?id=0&on=${turnOn}`;
+  const response = await fetch(url, { method: "GET" });
 
-  const response = await fetch(SHELLY_CLOUD_URL, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload)
-  });
-
-  const text = await response.text(); // voir le retour complet
-  if (!response.ok) throw new Error(`Erreur API Cloud : ${response.status} - ${text}`);
-  return JSON.parse(text);
+  if (!response.ok) {
+    const text = await response.text();
+    throw new Error(`Erreur API LAN : ${response.status} - ${text}`);
+  }
+  return response.json();
 }
 
 let rechargeEnCours = false;
@@ -50,17 +41,17 @@ app.post("/api/shelly/on", async (req, res) => {
   }
 
   try {
-    const result = await controlShellyRelayCloud(true);
+    const result = await controlShellyRelayLAN(true);
     rechargeEnCours = true;
-    console.log(`✅ Recharge démarrée pour ${dureeHeures}h via Cloud :`, result);
+    console.log(`✅ Recharge démarrée pour ${dureeHeures}h via LAN :`, result);
 
     const delayMs = dureeHeures * 60 * 60 * 1000;
     setTimeout(async () => {
       try {
-        const stopResult = await controlShellyRelayCloud(false);
+        const stopResult = await controlShellyRelayLAN(false);
         console.log(`⛔ Recharge arrêtée après ${dureeHeures}h :`, stopResult);
       } catch (err) {
-        console.error("❌ Erreur arrêt automatique Cloud:", err);
+        console.error("❌ Erreur arrêt automatique LAN:", err);
       } finally {
         rechargeEnCours = false;
       }
@@ -70,7 +61,7 @@ app.post("/api/shelly/on", async (req, res) => {
   } catch (error) {
     console.error("❌ Erreur dans /api/shelly/on:", error);
     rechargeEnCours = false;
-    return res.status(500).json({ success: false, message: "Erreur de communication Cloud" });
+    return res.status(500).json({ success: false, message: "Erreur de communication LAN" });
   }
 });
 
