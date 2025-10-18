@@ -1,15 +1,19 @@
 {
   "name": "recharge-velo",
   "version": "1.0.0",
-  "description": "Application Recharge Vélo Solvéo",
+  "description": "Application Node.js pour contrôler la recharge des vélos électriques Solvéo via Shelly LAN",
   "main": "server/app.js",
   "scripts": {
-    "start": "node server/app.js"
+    "start": "node server/app.js",
+    "dev": "nodemon server/app.js"
   },
   "dependencies": {
     "express": "^4.21.2",
     "mqtt": "^5.14.1",
     "node-fetch": "^2.7.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.2"
   },
   "engines": {
     "node": ">=16.0.0"
@@ -17,3 +21,4 @@
   "author": "TonNom",
   "license": "MIT"
 }
+
