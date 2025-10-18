@@ -13,7 +13,7 @@ app = FastAPI(title="API Recharge Vélo Solvéo", version="1.0")
 # === Config Shelly LAN ===
 SHELLY_IP = "192.168.1.27"
 SHELLY_URL = f"http://{SHELLY_IP}/rpc/Switch.Set"
-API_TOKEN = "mon-secret-token"  # Token simple pour l'API
+API_TOKEN = "Terminal111219"  # Token simple pour l'API
 
 # === Variables de contrôle ===
 recharge_en_cours = False
