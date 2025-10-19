@@ -1,56 +1,47 @@
 const express = require("express");
 const path = require("path");
-const fetch = require("node-fetch");
 
 const app = express();
 app.use(express.json());
 app.use(express.static(path.join(__dirname, "../public")));
 
 // === Config Shelly LAN ===
-const SHELLY_IP = "192.168.1.27";   // <-- à adapter avec l’IP de ton Shelly
-const SHELLY_URL = `http://${SHELLY_IP}/rpc`;
+const SHELLY_IP = "192.168.1.27"; // <--- adapte selon ton réseau
+const SHELLY_BASE_URL = `http://${SHELLY_IP}`;
 
 // === Variables de contrôle ===
 let rechargeEnCours = false;
 let rechargeTimer = null;
 
-// === Fonction utilitaire Fetch vers Shelly ===
-async function shellyRequest(method, params = {}) {
-  const url = `${SHELLY_URL}/${method}`;
-
-  const response = await fetch(url, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(params),
-  });
-
-  if (!response.ok) {
-    const text = await response.text();
-    throw new Error(`Erreur API LAN : ${response.status} - ${text}`);
-  }
-  return response.json();
-}
-
-// === Contrôle basique ===
+// === Fonctions pour contrôler le Shelly ===
 async function turnOnShelly() {
-  return shellyRequest("Switch.Set", { id: 0, on: true });
+  const res = await fetch(`${SHELLY_BASE_URL}/relay/0?turn=on`);
+  return res.json();
 }
+
 async function turnOffShelly() {
-  return shellyRequest("Switch.Set", { id: 0, on: false });
+  const res = await fetch(`${SHELLY_BASE_URL}/relay/0?turn=off`);
+  return res.json();
 }
+
 async function toggleShelly() {
-  return shellyRequest("Switch.Toggle", { id: 0 });
+  const res = await fetch(`${SHELLY_BASE_URL}/relay/0?turn=toggle`);
+  return res.json();
 }
+
 async function getShellyStatus() {
-  return shellyRequest("Switch.GetStatus", { id: 0 });
+  const res = await fetch(`${SHELLY_BASE_URL}/status`);
+  return res.json();
 }
+
 async function getShellyInfo() {
-  return shellyRequest("Shelly.GetDeviceInfo");
+  const res = await fetch(`${SHELLY_BASE_URL}/shelly`);
+  return res.json();
 }
 
 // === Routes API ===
 
-// Démarrer une recharge avec durée (1,2,3h)
+// Démarrer la recharge avec durée (1,2,3 heures)
 app.post("/api/shelly/on", async (req, res) => {
   const { duree } = req.body;
   const dureeHeures = Number(duree);
@@ -58,6 +49,7 @@ app.post("/api/shelly/on", async (req, res) => {
   if (!Number.isInteger(dureeHeures) || ![1, 2, 3].includes(dureeHeures)) {
     return res.status(400).json({ success: false, message: "Durée invalide (1, 2 ou 3 heures)" });
   }
+
   if (rechargeEnCours) {
     return res.status(429).json({ success: false, message: "Recharge déjà en cours" });
   }
@@ -67,22 +59,21 @@ app.post("/api/shelly/on", async (req, res) => {
     rechargeEnCours = true;
     console.log(`✅ Recharge démarrée pour ${dureeHeures}h :`, result);
 
-    const delayMs = dureeHeures * 60 * 60 * 1000;
     rechargeTimer = setTimeout(async () => {
       try {
         const stopResult = await turnOffShelly();
-        console.log(`⛔ Recharge arrêtée après ${dureeHeures}h :`, stopResult);
+        console.log(`⛔ Recharge arrêtée automatiquement après ${dureeHeures}h :`, stopResult);
       } catch (err) {
-        console.error("❌ Erreur arrêt auto LAN:", err);
+        console.error("❌ Erreur arrêt automatique :", err);
       } finally {
         rechargeEnCours = false;
         rechargeTimer = null;
       }
-    }, delayMs);
+    }, dureeHeures * 60 * 60 * 1000);
 
     res.json({ success: true, message: `Recharge démarrée pour ${dureeHeures}h`, data: result });
-  } catch (error) {
-    console.error("❌ Erreur dans /api/shelly/on:", error);
+  } catch (err) {
+    console.error("❌ Erreur /api/shelly/on :", err);
     rechargeEnCours = false;
     rechargeTimer = null;
     res.status(500).json({ success: false, message: "Erreur communication LAN" });
@@ -94,6 +85,7 @@ app.post("/api/shelly/off", async (req, res) => {
   if (!rechargeEnCours) {
     return res.status(400).json({ success: false, message: "Aucune recharge en cours" });
   }
+
   try {
     if (rechargeTimer) clearTimeout(rechargeTimer);
     const stopResult = await turnOffShelly();
@@ -102,29 +94,29 @@ app.post("/api/shelly/off", async (req, res) => {
     console.log("⛔ Recharge arrêtée manuellement :", stopResult);
     res.json({ success: true, message: "Recharge arrêtée", data: stopResult });
   } catch (err) {
-    console.error("❌ Erreur arrêt manuel LAN:", err);
+    console.error("❌ Erreur /api/shelly/off :", err);
     res.status(500).json({ success: false, message: "Erreur communication LAN" });
   }
 });
 
-// Toggle (pratique pour test)
+// Toggle (test)
 app.post("/api/shelly/toggle", async (req, res) => {
   try {
     const result = await toggleShelly();
     res.json({ success: true, message: "État basculé", data: result });
   } catch (err) {
-    console.error("❌ Erreur toggle:", err);
+    console.error("❌ Erreur /api/shelly/toggle :", err);
     res.status(500).json({ success: false, message: "Erreur communication LAN" });
   }
 });
 
-// Statut relais
+// Statut du relais
 app.get("/api/shelly/status", async (req, res) => {
   try {
     const status = await getShellyStatus();
     res.json({ success: true, data: status });
   } catch (err) {
-    console.error("❌ Erreur statut:", err);
+    console.error("❌ Erreur /api/shelly/status :", err);
     res.status(500).json({ success: false, message: "Erreur communication LAN" });
   }
 });
@@ -135,7 +127,7 @@ app.get("/api/shelly/info", async (req, res) => {
     const info = await getShellyInfo();
     res.json({ success: true, data: info });
   } catch (err) {
-    console.error("❌ Erreur info:", err);
+    console.error("❌ Erreur /api/shelly/info :", err);
     res.status(500).json({ success: false, message: "Erreur communication LAN" });
   }
 });
@@ -145,6 +137,7 @@ app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "../public/index.html"));
 });
 
+// Lancement du serveur
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
   console.log(`✅ Serveur en ligne sur le port ${port}`);
