@@ -8,12 +8,10 @@
     "dev": "nodemon server/app.js"
   },
   "dependencies": {
-    "express": "^4.21.2",
-    "mqtt": "^5.14.1",
-    "node-fetch": "^2.7.0"
+    "express": "^4.21.2"
   },
   "devDependencies": {
-    "nodemon": "^3.0.2"
+    "nodemon": "^3.1.10"
   },
   "engines": {
     "node": ">=16.0.0"
@@ -21,4 +19,3 @@
   "author": "TonNom",
   "license": "MIT"
 }
-
